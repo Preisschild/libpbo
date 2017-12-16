@@ -1,9 +1,11 @@
 #include <iostream>
+#include <experimental/filesystem>
 #include <ctime>
-#include <libpbo/PBO.hpp>
-#include <libpbo/ProductEntry.hpp>
+#include <libpbo/pbo.hpp>
+#include <libpbo/productentry.hpp>
+#include <cstdlib>
 
-int exitCode = 0;
+int exitCode = EXIT_SUCCESS;
 PBO::PBO *pbo = NULL;
 std::string filePath;
 void usage();
@@ -88,11 +90,13 @@ int main(int argc, char **argv)
 
 			std::cout << std::endl;
 		}
+
+		std::cout << "Signature: " << pbo->getSignature() << std::endl;
 	}
 	catch(std::exception const &e)
 	{
 		std::cerr << "pboinfo: " << e.what() << std::endl;
-		exitCode = -1;
+		exitCode = EXIT_FAILURE;
 	}
 
 	delete pbo;

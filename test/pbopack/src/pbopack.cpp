@@ -1,11 +1,13 @@
 #include <experimental/filesystem>
+#include <cstring>
 #include <cerrno>
 #include <iostream>
-#include <libpbo/PBO.hpp>
+#include <libpbo/pbo.hpp>
+#include <cstdlib>
 
 namespace filesystem = std::experimental::filesystem;
 
-int exitCode = 0;
+int exitCode = EXIT_SUCCESS;
 std::string directoryPath;
 std::string filePath;
 std::string productName;
@@ -23,15 +25,15 @@ int main(int argc, char **argv)
 			usage();
 			return 0;
 		}
-		else if(arg.find("--name=", 0) != std::string::npos)
+		else if(arg.find("--name=", 0) == 0)
 		{
 			std::cout << arg.substr(7) << std::endl;
 		}
-		else if(arg.find("--version=", 0) != std::string::npos)
+		else if(arg.find("--version=", 0) == 0)
 		{
 			std::cout << arg.substr(10) << std::endl;
 		}
-		else if(arg.find("--", 0) != std::string::npos || arg.find("-", 0) != std::string::npos)
+		else if(arg.find("--", 0, 2) == 0 || arg.find("-", 0, 1) == 0)
 		{
 			std::cerr << "pbopack: invalid option « " << arg << " »" << std::endl;
 		}
@@ -59,12 +61,6 @@ int main(int argc, char **argv)
 	if(!filesystem::is_directory(directoryPath))
 	{
 		std::cerr << "pbopack: " << directoryPath << ": " << std::strerror(ENOTDIR) << std::endl;
-		return -1;
-	}
-
-	if(filesystem::is_directory(filePath))
-	{
-		std::cerr << "pbopack: " << filePath << ": " << std::strerror(EISDIR) << std::endl;
 		return -1;
 	}
 
@@ -105,7 +101,7 @@ int main(int argc, char **argv)
 	catch(std::exception const &e)
 	{
 		std::cerr << "pbopack : " << e.what() << std::endl;
-		exitCode = -1;
+		exitCode = EXIT_FAILURE;
 	}
 
 	delete pbo;
